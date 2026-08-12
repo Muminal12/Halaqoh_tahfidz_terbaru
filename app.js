@@ -15,7 +15,59 @@ function records(){let ss=me().role==="admin"?db.students:db.students.filter(s=>
 function reports(){return head("Rekap & Laporan","Pekanan, bulanan, dan semester. Ustadz hanya mendapatkan data halaqoh binaannya.",`<button class="btn primary" onclick="pdf()">⇩ Unduh PDF</button>`)+`<div class="panel"><div class="tabs"><button class="rt active" data-t="pekanan">Pekanan</button><button class="rt" data-t="bulanan">Bulanan</button><button class="rt" data-t="semester">Semester</button></div><div id="report"></div></div>`}
 function getReport(t){let days=t==="pekanan"?7:t==="bulanan"?30:180,st=new Date(Date.now()-days*86400000),ss=me().role==="admin"?db.students:db.students.filter(s=>s.ustadzId===me().id),rs=db.records.filter(r=>new Date(r.date)>=st&&ss.some(s=>s.id===r.studentId)),avg=rs.length?(rs.reduce((a,r)=>a+Number(r.score),0)/rs.length).toFixed(1):"0";let nums=Array(7).fill(0);rs.forEach(r=>nums[new Date(r.date).getDay()]++);return {rs,ss,avg,nums}}
 function reportHTML(t){let x=getReport(t),labs=["Min","Sen","Sel","Rab","Kam","Jum","Sab"],max=Math.max(...x.nums,1);return `<div class="cards"><div class="stat"><b>${x.rs.length}</b><small>Total setoran</small></div><div class="stat"><b>${x.avg}</b><small>Rata-rata nilai</small></div><div class="stat"><b>${new Set(x.rs.map(r=>r.studentId)).size}</b><small>Santri aktif</small></div><div class="stat"><b>${t[0].toUpperCase()+t.slice(1)}</b><small>Periode</small></div></div><div class="chart">${x.nums.map(n=>`<div class="bar" style="height:${Math.max(12,n/max*145)}px"><small>${n}</small></div>`).join("")}</div><div class="labels">${labs.map(l=>`<span>${l}</span>`).join("")}</div><div class="panel"><h3>Rincian setoran</h3>${x.rs.length?`<div class="tablewrap"><table class="table"><tr><th>Tanggal</th><th>Santri</th><th>Hafalan</th><th>Nilai</th></tr>${x.rs.slice().reverse().map(r=>`<tr><td>${r.date}</td><td>${e(db.students.find(s=>s.id===r.studentId)?.name)}</td><td>${e(r.surah)} : ${e(r.ayat)}</td><td>${r.score}</td></tr>`).join("")}</table></div>`:`<div class="empty">Belum ada data pada periode ini.</div>`}</div>`}
-function modal(title,body,fn){$("#modal").innerHTML=`<div class="modalbg"><form class="modalcard"><h2>${title}</h2>${body}<div class="actions"><button type="button" class="btn light" onclick="closeModal()">Batal</button><button class="btn primary">Simpan</button></div></form></div>`;$("#modal form").onsubmit=a=>{a.preventDefault();fn($("#modal form"))}}function closeModal(){$("#modal").innerHTML=""}
+function modal(title,body,fn){
+  $("#modal").innerHTML=`
+    <div class="modalbg" role="dialog" aria-modal="true">
+      <div class="modalcard">
+        <div class="modaltop">
+          <h2>${title}</h2>
+          <button type="button" class="xclose" onclick="closeModal()">×</button>
+        </div>
+
+        <form>
+          ${body}
+
+          <div class="actions">
+            <button type="button" class="btn light" onclick="closeModal()">
+              Batal
+            </button>
+            <button class="btn primary">
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+
+  const bg=$("#modal .modalbg");
+  const form=$("#modal form");
+
+  form.onsubmit=a=>{
+    a.preventDefault();
+    fn(form);
+  };
+
+  bg.addEventListener("click",a=>{
+    if(a.target===bg){
+      closeModal();
+    }
+  });
+
+  setTimeout(()=>{
+    form.querySelector("input,select,textarea")?.focus();
+  },50);
+}
+
+function closeModal(){
+  $("#modal").innerHTML="";
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    closeModal();
+  }
+});
 function studentModal(){modal("Tambah Santri",`<div class="formgrid"><div class="field"><label>Nama<input id="n" required></label></div><div class="field"><label>Kelas<input id="c"></label></div><div class="field"><label>Kelompok<select id="g"><option value="">Belum dikelompokkan</option>${db.groups.map(g=>`<option value="${g.id}">${e(g.name)}</option>`).join("")}</select></label></div></div>`,f=>{let g=db.groups.find(x=>x.id===f.g.value);db.students.push({id:"s"+Date.now(),name:f.n.value,className:f.c.value,groupId:g?.id||"",ustadzId:g?.ustadzId||""});save();closeModal();toast("Santri ditambahkan");render()})}
 function userModal(){modal("Buat Akun Ustadz",`<div class="formgrid"><div class="field"><label>Nama<input id="n" required></label></div><div class="field"><label>Username<input id="u" required></label></div><div class="field"><label>Password<input id="p" required></label></div></div>`,f=>{if(db.users.some(u=>u.username===f.u.value))return toast("Username sudah dipakai.");db.users.push({id:"u"+Date.now(),name:f.n.value,username:f.u.value,password:f.p.value,role:"ustadz"});save();closeModal();toast("Akun ustadz dibuat");render()})}
 function groupModal(){let us=db.users.filter(u=>u.role==="ustadz");modal("Buat Kelompok Halaqoh",`<div class="formgrid"><div class="field"><label>Nama kelompok<input id="n" required placeholder="Halaqoh A"></label></div><div class="field"><label>Ustadz<select id="u" required><option value="">Pilih ustadz</option>${us.map(u=>`<option value="${u.id}">${e(u.name)}</option>`).join("")}</select></label></div></div>`,f=>{db.groups.push({id:"g"+Date.now(),name:f.n.value,ustadzId:f.u.value});save();closeModal();toast("Kelompok dibuat");render()})}
