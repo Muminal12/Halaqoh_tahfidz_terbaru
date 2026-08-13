@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b5d4f">
+<title>Aplikasi Halaqoh Tahfidz Online</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div id="login" class="login-page">
+  <div class="login-art"><div class="moon">☪</div><span class="pill">HALAQOH TAHFIDZ</span><h1>Menjaga hafalan,<br><em>menumbuhkan generasi.</em></h1><p>Platform pengelolaan halaqoh untuk pencatatan setoran, perkembangan santri, dan rekap yang rapi.</p><div class="quote">“Sebaik-baik kalian adalah yang mempelajari Al-Qur'an dan mengajarkannya.”<small>— HR. Bukhari</small></div></div>
+  <div class="login-panel"><div class="login-brand"><span>☪</span><div><b>Halaqoh</b><small>Tahfidz Online</small></div></div><div class="login-copy"><span>Selamat datang kembali</span><h2>Masuk ke ruang halaqoh</h2><p>Kelola hafalan santri dengan lebih mudah dan terstruktur.</p></div>
+  <form id="loginForm"><label>Username<div class="input-wrap"><span>◉</span><input id="username" required autocomplete="username" placeholder="Masukkan username"></div></label><label>Password<div class="input-wrap"><span>●</span><input id="password" type="password" required autocomplete="current-password" placeholder="Masukkan password"><button type="button" id="togglePassword">Lihat</button></div></label><button class="btn primary full">Masuk ke Dashboard <span>→</span></button><p id="loginError" class="error hidden"></p></form><small class="secure">✦ Data tersimpan aman di perangkat Anda</small></div>
+</div>
+<div id="app" class="hidden">
+<aside id="sidebar"><div class="brand"><div class="brand-mark">☪</div><div><b>Halaqoh</b><small>Tahfidz Online</small></div></div><div class="section-label">MENU UTAMA</div><nav id="nav"></nav><div class="sidebottom"><div class="profile-mini"><div class="avatar" id="avatar"></div><div><b id="who-name"></b><small id="who-role"></small></div></div><button id="logout" class="logout">↪ <span>Keluar</span></button></div></aside>
+<main><header class="topbar"><div><button id="menu" class="icon-btn">☰</button><div class="top-title"><span id="top-date"></span><b>Aplikasi Halaqoh Tahfidz Online</b></div></div><div class="top-actions"><div class="top-user"><div class="avatar" id="top-avatar"></div><div><b id="top-name"></b><small id="top-role"></small></div></div></div></header><div id="view"></div></main>
+</div>
+<div id="modal"></div><div id="toast"></div>
+<script src="app.js"></script>
+</body></html>
