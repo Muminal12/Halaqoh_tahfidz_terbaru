@@ -156,15 +156,147 @@ function groupModal(){
   })
 }
 function recordModal(){
-  const ss=visibleStudents();
-  if(!ss.length)return toast("Belum ada santri yang bisa diberi setoran","error");
-  modal("Catat Setoran",`<div class="formgrid"><label>Santri<select name="studentId" required>${ss.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")}</select></label><label>Tanggal<input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" required></label><label>Surat<input name="surah" required placeholder="Al-Mulk"></label><label>Ayat<input name="ayat" required placeholder="1-10"></label><label>Nilai<select name="score"><option value="90">90 — Sangat Baik</option><option value="80">80 — Baik</option><option value="70">70 — Cukup</option><option value="60">60 — Perlu Murajaah</option></select></label><label>Catatan<input name="note" placeholder="Catatan ustadz"></label></div>`,f=>{
-    db.records.push({id:uid("r"),studentId:f.studentId.value,date:f.date.value,surah:f.surah.value.trim(),ayat:f.ayat.value.trim(),score:+f.score.value,note:f.note.value.trim()});save();closeModal();toast("Setoran tersimpan");render()
-  })
-}
-function delStudent(id){if(!confirm("Hapus santri dan seluruh setoran santri ini?"))return;db.students=db.students.filter(s=>s.id!==id);db.records=db.records.filter(r=>r.studentId!==id);save();render()}
-function delUser(id){if(!confirm("Hapus akun ustadz ini?"))return;db.users=db.users.filter(u=>u.id!==id);db.groups=db.groups.map(g=>g.ustadzId===id?{...g,ustadzId:""}:g);db.students=db.students.map(s=>s.ustadzId===id?{...s,ustadzId:""}:s);save();render()}
+  let ss=me().role==="admin"
+    ? db.students
+    : db.students.filter(s=>s.ustadzId===me().id);
 
+  if(!ss.length){
+    return toast("Belum ada santri.");
+  }
+
+  const surah=[
+    "Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah",
+    "Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf",
+    "Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam",
+    "Ta-Ha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan",
+    "Asy-Syu'ara'","An-Naml","Al-Qasas","Al-'Ankabut","Ar-Rum","Luqman",
+    "As-Sajdah","Al-Ahzab","Saba'","Fatir","Ya-Sin","As-Saffat","Sad",
+    "Az-Zumar","Ghafir","Fussilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan",
+    "Al-Jasiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf",
+    "Az-Zariyat","At-Tur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah",
+    "Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","As-Saff",
+    "Al-Jumu'ah","Al-Munafiqun","At-Taghabun","At-Talaq","At-Tahrim",
+    "Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn",
+    "Al-Muzzammil","Al-Muddassir","Al-Qiyamah","Al-Insan","Al-Mursalat",
+    "An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infitar",
+    "Al-Mutaffifin","Al-Insyiqaq","Al-Buruj","At-Tariq","Al-A'la",
+    "Al-Gasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Duha",
+    "Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah",
+    "Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr",
+    "Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kausar","Al-Kafirun",
+    "An-Nasr","Al-Lahab","Al-Ikhlas","Al-Falaq","An-Nas"
+  ];
+
+  const options=surah.map((s,i)=>
+    `<option value="${s}">${i+1}. ${s}</option>`
+  ).join("");
+
+  modal(
+    "Catat Setoran",
+    `
+    <div class="formgrid">
+
+      <div class="field">
+        <label>Santri
+          <select id="s" required>
+            ${ss.map(x=>`
+              <option value="${x.id}">
+                ${e(x.name)}
+              </option>
+            `).join("")}
+          </select>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Jenis Setoran
+          <select id="t" required>
+            <option value="Ziyadah">📖 Ziyadah</option>
+            <option value="Murajaah">🔄 Murajaah</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Dari Surat
+          <select id="from" required>
+            ${options}
+          </select>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Sampai Surat
+          <select id="to" required>
+            ${options}
+          </select>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Ayat
+          <input id="a" required placeholder="Contoh: 1-10">
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Tanggal
+          <input
+            id="d"
+            type="date"
+            value="${new Date().toISOString().slice(0,10)}"
+            required
+          >
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Nilai
+          <select id="v">
+            <option value="90">90 — Sangat Baik</option>
+            <option value="80">80 — Baik</option>
+            <option value="70">70 — Cukup</option>
+            <option value="60">60 — Perlu Murajaah</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Catatan
+          <input id="n" placeholder="Catatan ustadz">
+        </label>
+      </div>
+
+    </div>
+    `,
+    f=>{
+      db.records.push({
+        id:"r"+Date.now(),
+        studentId:f.s.value,
+
+        // jenis setoran
+        type:f.t.value,
+
+        // rentang surat
+        fromSurah:f.from.value,
+        toSurah:f.to.value,
+
+        // tetap simpan surah lama supaya kompatibel
+        surah:f.from.value,
+
+        ayat:f.a.value,
+        date:f.d.value,
+        score:+f.v.value,
+        note:f.n.value
+      });
+
+      save();
+      closeModal();
+      toast("Setoran tersimpan");
+      render();
+    }
+  );
+}
 function downloadPDF(){
   if(!window.jspdf?.jsPDF)return toast("PDF belum siap. Periksa koneksi internet lalu coba lagi.","error");
   const type=$(".tab.active")?.dataset.type||"pekanan", {ss,rs}=reportData(type);
