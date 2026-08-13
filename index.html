@@ -1,0 +1,19 @@
+<!doctype html><html lang="id"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aplikasi Halaqoh Tahfidz Online</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div id="toast"></div><div id="modal"></div>
+<section id="login" class="login-screen"><div class="login-art"><div class="crescent">☾</div>
+<div class="arabic">وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</div><h1>Aplikasi Halaqoh<br><b>Tahfidz Online</b></h1>
+<p>Kelola hafalan, halaqoh, dan perkembangan santri dengan lebih mudah.</p></div>
+<div class="login-card"><div class="brand"><span>۞</span><div><b>HALAQOH TAHFIDZ</b><small>ONLINE MANAGEMENT</small></div></div>
+<h2>Selamat datang</h2><p class="muted">Masuk untuk melanjutkan ke dashboard.</p>
+<form id="loginForm"><label>Email<input id="username" type="email" autocomplete="email" required placeholder="email@contoh.com"></label><label>Password<div class="pass"><input id="password" type="password" autocomplete="current-password" required><button type="button" id="togglePassword">Lihat</button></div></label>
+<div id="loginError" class="error hidden"></div><button class="primary wide">Masuk ke Aplikasi →</button></form>
+<small class="hint">Gunakan email dan password akun Supabase Auth.</small></div></section>
+<section id="app" class="hidden"><header class="topbar"><button id="menu" class="icon">☰</button>
+<div class="top-title"><b>Aplikasi Halaqoh Tahfidz Online</b><span id="top-date"></span></div>
+<div class="top-user"><span id="top-avatar">U</span><div><b id="top-name">User</b><small id="top-role">Ustadz</small></div><button id="logout" class="logout">Keluar</button></div></header>
+<aside id="sidebar"><div class="side-brand"><span>۞</span><div><b>HALAQOH</b><small>TAHFIDZ ONLINE</small></div></div><nav id="nav"></nav>
+<div class="side-user"><span id="avatar">U</span><div><b id="who-name">User</b><small id="who-role">Ustadz</small></div></div></aside><main id="view"></main></section>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="app.js"></script></body></html>
