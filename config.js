@@ -17,6 +17,6 @@
    SELURUH database tanpa batas.
    ========================================================= */
 window.SUPABASE_CONFIG = {
-  url: 'https://YOUR-PROJECT-REF.supabase.co',
-  anonKey: 'YOUR-ANON-PUBLIC-KEY'
+  url: 'https://wcnblqtyupqrvnisquev.supabase.co/rest/v1/',
+  anonKey: ''
 };
