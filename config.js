@@ -17,6 +17,6 @@
    SELURUH database tanpa batas.
    ========================================================= */
 window.SUPABASE_CONFIG = {
-  url: 'https://wcnblqtyupqrvnisquev.supabase.co/rest/v1/',
+  url: 'https://wcnblqtyupqrvnisquev.supabase.co',
   anonKey: 'sb_publishable_kEaT52pxurL9ZDnsMOLv3Q_lKFLN7DF'
 };
