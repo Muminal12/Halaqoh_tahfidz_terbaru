@@ -18,5 +18,5 @@
    ========================================================= */
 window.SUPABASE_CONFIG = {
   url: 'https://wcnblqtyupqrvnisquev.supabase.co/rest/v1/',
-  anonKey: 'sb_publishable_rM7eFSy1_MF3NT_eZKiXfw_tQk7VuTI'
+  anonKey: 'sb_publishable_kEaT52pxurL9ZDnsMOLv3Q_lKFLN7DF'
 };
